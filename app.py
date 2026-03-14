@@ -68,7 +68,7 @@ with col1:
     texto = st.text_area(
         "Lista de apelidos e cartelas",
         height=300,
-        placeholder="exemplo:\njoao 10\nmaria 5\nJuriscleuza - 10"
+        placeholder="exemplo:\njoao 10\nmaria 5\nJuriscleuza \nVamoperde: 5 \nVamoganha : 50 - 10"
     )
 
     if st.button("Gerar CSVs"):
