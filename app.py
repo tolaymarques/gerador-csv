@@ -98,7 +98,7 @@ def atualizar_nome_chat(id_externo, novo_nome):
     return True, ""
 
 # ── UI Principal ───────────────────────────────────────────────────────────
-st.title("Freetickets Izão")
+st.title("Freetickets Izão v2.0 turbo")
 
 with st.expander("Problemas"):
     st.write("""
