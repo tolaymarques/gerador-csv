@@ -103,9 +103,8 @@ st.title("Freetickets Izão")
 with st.expander("Problemas"):
     st.write("""
 1. Só corrige letra maiuscula e minuscula, o resto tem q estar correto
-2. Não separa as cartelas de 50 em 50 não sei pq caralhos, tem q separar na mão
-3. As vezes o arquivo que gerou some, tem que baixar rapido
-4. Se um user não tiver nickname não vai encontrar e também não atualiza automaticamente caso ele coloque. Então eu tenho que atualizar a 'base' de users na mão. Também tenho q colocar novos usuarios na mão
+2. As vezes o arquivo que gerou some, tem que baixar rapido
+3. Não atualiza automaticamente novos users nem troca de apelidos. Por isso coloquei os campos de adicionar novo user e modificar nickname
 """)
 
 col1, col2 = st.columns([3, 1])
