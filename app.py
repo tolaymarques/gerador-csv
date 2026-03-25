@@ -183,16 +183,14 @@ with col2:
 # Usar form com clear_on_submit=False evita que os botões sumam ao clicar num deles
 if st.session_state.arquivos:
     st.subheader("Arquivos gerados")
-    with st.form("form_downloads", clear_on_submit=False):
-        for nome, conteudo in st.session_state.arquivos.items():
-            st.download_button(
-                f"Baixar {nome}",
-                conteudo,
-                nome,
-                "text/csv",
-                key=f"dl_{nome}",
-            )
-        st.form_submit_button(".", disabled=True, help="Use os botões acima para baixar")
+    for nome, conteudo in st.session_state.arquivos.items():
+        st.download_button(
+            f"Baixar {nome}",
+            conteudo,
+            nome,
+            "text/csv",
+            key=f"dl_{nome}",
+        )
 
 # ── Gerenciar Usuários ─────────────────────────────────────────────────────
 st.divider()
