@@ -221,7 +221,7 @@ with st.expander("➕ Adicionar novo usuário"):
                     except Exception as e:
                         st.exception(e)
 
-with st.expander("✏️ Editar nome no chat"):
+with st.expander("✏️ Editar nome no chat <<<< Não usa ta dando BO essa merda"):
     with st.form("form_editar"):
         edit_id = st.text_input("Id Externo do usuário")
         edit_nick = st.text_input("Novo nome no chat")
