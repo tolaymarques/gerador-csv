@@ -69,24 +69,28 @@ def carregar_base():
 def salvar_novo_usuario(id_externo, nome_no_chat, grupo):
     """Adiciona uma nova linha na planilha."""
     sheet = get_sheet()
-    # Ordem das colunas: Id do jogador | Id externo | nome do jogador | Nome no chat | e-mail | tipo | moeda | grupo | criado em
     nova_linha = ["", id_externo, "", normalizar(nome_no_chat), "", "", "", grupo, ""]
     sheet.append_row(nova_linha, value_input_option="USER_ENTERED")
     carregar_base.clear()
 
-def atualizar_nome_chat(id_externo, novo_nome):
-    """Atualiza a coluna 'Nome no chat' da linha com o Id Externo informado."""
+def atualizar_nome_chat(id_externo, grupo, novo_nome):
+    """Atualiza 'Nome no chat' da linha com Id Externo + grupo informados."""
     sheet = get_sheet()
-    id_col = sheet.col_values(2)  # Coluna B = Id Externo
+    all_records = sheet.get_all_records()
     headers = sheet.row_values(1)
 
-    # Busca todas as ocorrências (evita editar linha errada se houver duplicata)
-    ocorrencias = [i + 1 for i, val in enumerate(id_col) if val == str(id_externo)]
+    # Busca linha com id_externo E grupo correspondentes
+    ocorrencias = [
+        i + 2  # +2 porque get_all_records começa no índice 0 (linha 2 da planilha)
+        for i, row in enumerate(all_records)
+        if str(row.get("Id Externo", "")) == str(id_externo)
+        and row.get("grupo", "") == grupo
+    ]
 
     if not ocorrencias:
-        return False, "Id Externo não encontrado na planilha."
+        return False, f"Nenhum usuário com Id Externo '{id_externo}' no grupo '{grupo}'."
     if len(ocorrencias) > 1:
-        return False, f"Id Externo '{id_externo}' aparece {len(ocorrencias)} vezes na planilha. Corrija manualmente."
+        return False, f"Encontradas {len(ocorrencias)} linhas com mesmo Id e grupo. Corrija manualmente."
 
     try:
         col_index = headers.index("Nome no chat") + 1
@@ -180,7 +184,6 @@ with col2:
         st.success("Sistema pronto")
 
 # ── Downloads ──────────────────────────────────────────────────────────────
-# Usar form com clear_on_submit=False evita que os botões sumam ao clicar num deles
 if st.session_state.arquivos:
     st.subheader("Arquivos gerados")
     for nome, conteudo in st.session_state.arquivos.items():
@@ -209,9 +212,18 @@ with st.expander("➕ Adicionar novo usuário"):
                 with st.spinner("Verificando base..."):
                     df_atual = carregar_base()
 
-                if str(novo_id) in df_atual["Id Externo"].astype(str).values:
-                    st.error(f"Id Externo '{novo_id}' já existe na base.")
-                elif normalizar(novo_nick) in df_atual["Nome no chat"].values:
+                # Bloqueia só se o mesmo ID já existir NO MESMO GRUPO
+                duplicado_id_grupo = not df_atual[
+                    (df_atual["Id Externo"].astype(str) == str(novo_id)) &
+                    (df_atual["grupo"] == novo_grupo)
+                ].empty
+
+                # Bloqueia se o nick já existir (nick é único globalmente)
+                duplicado_nick = normalizar(novo_nick) in df_atual["Nome no chat"].values
+
+                if duplicado_id_grupo:
+                    st.error(f"Id Externo '{novo_id}' já existe no grupo '{novo_grupo}'.")
+                elif duplicado_nick:
                     st.error(f"Nome no chat '{novo_nick}' já existe na base.")
                 else:
                     try:
@@ -221,9 +233,10 @@ with st.expander("➕ Adicionar novo usuário"):
                     except Exception as e:
                         st.exception(e)
 
-with st.expander("✏️ Editar nome no chat <<<< Não usa ta dando BO essa merda"):
+with st.expander("✏️ Editar nome no chat"):
     with st.form("form_editar"):
         edit_id = st.text_input("Id Externo do usuário")
+        edit_grupo = st.selectbox("Grupo", GRUPOS)
         edit_nick = st.text_input("Novo nome no chat")
         submitted_edit = st.form_submit_button("Atualizar")
 
@@ -235,16 +248,21 @@ with st.expander("✏️ Editar nome no chat <<<< Não usa ta dando BO essa merd
                     df_atual = carregar_base()
 
                 nick_normalizado = normalizar(edit_nick)
+
+                # Bloqueia se o nick já estiver em uso por OUTRO usuário
                 linha_conflito = df_atual[
                     (df_atual["Nome no chat"] == nick_normalizado) &
-                    (df_atual["Id Externo"].astype(str) != str(edit_id))
+                    ~(
+                        (df_atual["Id Externo"].astype(str) == str(edit_id)) &
+                        (df_atual["grupo"] == edit_grupo)
+                    )
                 ]
                 if not linha_conflito.empty:
                     st.error(f"Nome '{edit_nick}' já está em uso por outro usuário.")
                 else:
                     try:
                         with st.spinner("Atualizando..."):
-                            ok, msg = atualizar_nome_chat(edit_id, edit_nick)
+                            ok, msg = atualizar_nome_chat(edit_id, edit_grupo, edit_nick)
                         if ok:
                             st.success(f"Nome atualizado para '{edit_nick}'!")
                         else:
