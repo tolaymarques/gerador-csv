@@ -3,8 +3,8 @@ import streamlit as st
 from deep_translator import GoogleTranslator
 from concurrent.futures import ThreadPoolExecutor
 
-st.set_page_config(page_title="Tradutor EN → PT & ES", layout="wide")
-st.title("🌐 Tradutor EN → PT & ES")
+st.set_page_config(page_title="Tradutor HTML", layout="wide")
+st.title("Tradutor HTML EN → PT & ES")
 st.caption("Cole um texto em inglês e gere versões em português e espanhol com formatação HTML.")
 
 def formatar_html(texto: str) -> str:
