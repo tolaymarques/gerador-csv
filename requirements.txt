@@ -4,3 +4,5 @@ openpyxl
 gspread
 google-auth
 deep-translator
+Pillow
+requests
