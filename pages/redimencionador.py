@@ -1,20 +1,3 @@
-"""
-Página Streamlit — Conversor de Assets para WEBP
-Replica o script exportar_webp.jsx do Photoshop.
-
-Autenticação: mesma service account usada nas outras páginas
-(st.secrets["gcp_service_account"]).
-Basta compartilhar a pasta do Drive com o e-mail da service account.
-
-Fluxo:
-  1. Usuário cola o link da pasta do jogo
-  2. App lista e baixa imagens via Drive API (autenticado)
-  3. Detecta H / V / Q por proporção + tamanho mínimo
-  4. Preview + seleção de alternativas
-  5. Usuário digita os 3 nomes base
-  6. Gera 9 WEBP e oferece download individual + ZIP
-"""
-
 import io
 import re
 import zipfile
@@ -216,7 +199,6 @@ ss("folder_loaded", False)
 st.markdown("## 🖼️ Conversor de Assets")
 st.markdown(
     "Cole o link da pasta do jogo no Google Drive "
-    "*(a pasta deve estar compartilhada com a service account)*. "
     "O app detecta automaticamente **Horizontal**, **Vertical** e **Quadrada** "
     "e gera os 9 arquivos WEBP."
 )
