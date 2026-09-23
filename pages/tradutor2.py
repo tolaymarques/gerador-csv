@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import requests
 import html
@@ -152,4 +151,3 @@ if traduzir:
                 st.error(
                     f"Erro na tradução: {e}"
                 )
-```
